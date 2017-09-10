@@ -60,6 +60,11 @@ def combine():
     call(command)
 
 
+def copy_combined():
+    name = LANG + '.traineddata'
+    call_shell('cp ' + name + ' ../tessdata/' + name)
+
+
 text2image('../training_text.txt')
 training()
 unicharset()
@@ -67,3 +72,4 @@ clustering()
 cntraining()
 prepare_for_combine()
 combine()
+copy_combined()
