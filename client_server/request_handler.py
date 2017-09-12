@@ -4,7 +4,7 @@ import request
 class PingRequestHandler:
     def handle(self, request_content):
         return {
-            'code': ResponseErrorCode.OK,
+            'code': ResponseErrorCode.OK.name,
             'content': 'pong'
         }
 

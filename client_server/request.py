@@ -33,10 +33,9 @@ class RequestContentParserFactory:
 class RequestMessageParser:
     @staticmethod
     def parse(data):
-        tree = ET.parse(data)
-        root = tree.getroot()
-        request_type_el = root.find('request_type')
-        request_content_el = root.find('request_content')
+        req = ET.fromstring(data.decode('ascii'))
+        request_type_el = req.find('request_type')
+        request_content_el = req.find('request_content')
 
         request_type = RequestType[request_type_el.text]
         raw_content = request_content_el.text

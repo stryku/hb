@@ -11,4 +11,4 @@ class ResponseErrorCode(Enum):
 class ResponseFormatter:
     @staticmethod
     def format(response):
-        return dicttoxml([response], custom_root='resp', attr_type=False)
+        return dicttoxml(response, custom_root='resp', attr_type=False)
