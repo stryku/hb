@@ -1,6 +1,7 @@
 import subprocess
 import tempfile
 from os import path
+import base64
 
 
 def create_tmp_file(base_name):
@@ -17,3 +18,9 @@ def run_process(command):
         'stdout': out,
         'stderr': err
     }
+
+
+def read_file_as_b64(filename):
+    file = open(filename, 'r+b')
+    content = file.readall()
+    return base64.encode(content)
