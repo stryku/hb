@@ -10,17 +10,21 @@ def create_request():
 
     if sys.argv[1] == 'extract':
         b64_file = utils.read_file_as_b64(sys.argv[2])
-        return request.RequestFactory.create_full(request.RequestType.EXTRACT_FROM_RECEIPT,
-                                                  b64_file)
+        content = {
+            'filename': sys.argv[2],
+            'file_data': b64_file.decode()
+        }
+        return request.RequestFactory.create_full(request.RequestType.EXTRACT_FROM_RECEIPT.name,
+                                                  content)
 
 
 def main():
     s = socket.socket()
     s.connect(("localhost", 9999))
     req = create_request()
-    s.send(req)
-    resp = s.recv(1024)
-    print('received response: ' + str(resp))
+    utils.send_msg(s, req)
+    resp = utils.recv_msg(s)
+    print('received response: ' + resp.decode())
     s.close()
 
 

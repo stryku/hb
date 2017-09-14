@@ -2,6 +2,7 @@ import subprocess
 import tempfile
 from os import path
 import base64
+import struct
 
 
 def create_tmp_file(base_name):
@@ -21,6 +22,31 @@ def run_process(command):
 
 
 def read_file_as_b64(filename):
-    file = open(filename, 'r+b')
-    content = file.readall()
-    return base64.encode(content)
+    with open(filename, 'rb') as file:
+        content = file.read()
+        return base64.b64encode(content)
+
+
+def send_msg(sock, msg):
+    # Prefix each message with a 4-byte length (network byte order)
+    msg = struct.pack('>I', len(msg)) + msg
+    sock.sendall(msg)
+
+def recv_msg(sock):
+    # Read message length and unpack it into an integer
+    raw_msglen = recvall(sock, 4)
+    if not raw_msglen:
+        return None
+    msglen = struct.unpack('>I', raw_msglen)[0]
+    # Read the message data
+    return recvall(sock, msglen)
+
+def recvall(sock, n):
+    # Helper function to recv n bytes or return None if EOF is hit
+    data = b''
+    while len(data) < n:
+        packet = sock.recv(n - len(data))
+        if not packet:
+            return None
+        data += packet
+    return data

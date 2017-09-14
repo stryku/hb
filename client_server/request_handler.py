@@ -3,6 +3,7 @@ import request
 import base64
 import scripts
 import tempfile
+import os
 
 
 class PingRequestHandler:
@@ -17,18 +18,25 @@ class ExtractFromReceiptRequestHandler:
         self.temp_dir = tempfile.TemporaryDirectory()
         self.preprocessed_image_name = ''
 
-    def extract_to_tmp_image(self, oryginal_name, b64_data):
-        file = open(self.temp_dir.name + '/' + oryginal_name)
-        file.write(base64.b64decode(b64_data))
+    def extract_to_tmp_image(self, oryginal_name, data):
+        file = open(self.temp_dir.name + '/' + oryginal_name, 'wb')
+        file.write(data)
+        file.close()
+
+        saved_file = open('saved_' + oryginal_name, 'wb')
+        saved_file.write(data)
+        saved_file.close()
         return file
 
     def preprocess_image(self, oryginal_file):
-        self.preprocessed_image_name = 'preprocessed_' + oryginal_file.name
-        return scripts.textcleaner(oryginal_file, self.preprocessed_image_name)
+        name = os.path.basename(oryginal_file.name)
+        path = os.path.dirname(oryginal_file.name)
+        self.preprocessed_image_name = path + '/preprocessed_' + name
+        return scripts.textcleaner(oryginal_file.name, self.preprocessed_image_name)
 
     def format_success_response(self, tesseract_return):
         response_content = {
-            'extracted_text': tesseract_return['stdout']
+            'extracted_text': tesseract_return['stdout'].decode()
         }
         return response.ResponseFormatter.format(response.ResponseErrorCode.OK,
                                                  response_content)
@@ -53,7 +61,8 @@ class RequestHandlerFactory:
     @staticmethod
     def create(request_type):
         return {
-            request.RequestType.PING: PingRequestHandler()
+            request.RequestType.PING: PingRequestHandler(),
+            request.RequestType.EXTRACT_FROM_RECEIPT: ExtractFromReceiptRequestHandler(),
         }[request_type]
 
 

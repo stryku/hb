@@ -19,7 +19,12 @@ class NoContentParser:
 class ExtractFromReceiptContentParser:
     @staticmethod
     def parse(data):
-        return {'image': base64.b64decode(data)}
+        filename_el = data.find('filename')
+        file_data_el = data.find('file_data')
+        return {
+            'filename': filename_el.text,
+            'file_data': base64.b64decode(file_data_el.text)
+        }
 
 
 class RequestContentParserFactory:
@@ -39,7 +44,7 @@ class RequestMessageParser:
         request_content_el = req.find('request_content')
 
         request_type = RequestType[request_type_el.text]
-        raw_content = request_content_el.text
+        raw_content = request_content_el
         content_parser = RequestContentParserFactory.create(request_type)
         request_content = content_parser.parse(raw_content)
 
