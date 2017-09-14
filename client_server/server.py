@@ -20,9 +20,8 @@ def main():
         print("received: " + str(message))
         parsed_message = request.RequestMessageParser.parse(message)
         handler_response = request_handler.RequestHandler.handle(parsed_message)
-        formatted_response = response.ResponseFormatter.format(handler_response)
-        print("sending response: " + str(formatted_response))
-        sc.send(formatted_response)
+        print("sending response: " + str(handler_response))
+        sc.send(handler_response)
         sc.close()
 
     s.close()
