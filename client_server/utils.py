@@ -5,6 +5,13 @@ import base64
 import struct
 
 
+def to_string(data):
+    if isinstance(data, str):
+        return data
+    else:
+        return data.decode()
+
+
 def create_tmp_file(base_name):
     filename, extension = path.split(base_name)
     return tempfile.TemporaryFile(suffix=extension)
@@ -16,8 +23,8 @@ def run_process(command):
 
     return {
         'ret_code': process.returncode,
-        'stdout': out,
-        'stderr': err
+        'stdout': to_string(out),
+        'stderr': to_string(err)
     }
 
 
@@ -32,6 +39,7 @@ def send_msg(sock, msg):
     msg = struct.pack('>I', len(msg)) + msg
     sock.sendall(msg)
 
+
 def recv_msg(sock):
     # Read message length and unpack it into an integer
     raw_msglen = recvall(sock, 4)
@@ -40,6 +48,7 @@ def recv_msg(sock):
     msglen = struct.unpack('>I', raw_msglen)[0]
     # Read the message data
     return recvall(sock, msglen)
+
 
 def recvall(sock, n):
     # Helper function to recv n bytes or return None if EOF is hit

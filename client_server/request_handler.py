@@ -1,9 +1,9 @@
 import response
 import request
-import base64
 import scripts
 import tempfile
 import os
+import utils
 
 
 class PingRequestHandler:
@@ -36,7 +36,7 @@ class ExtractFromReceiptRequestHandler:
 
     def format_success_response(self, tesseract_return):
         response_content = {
-            'extracted_text': tesseract_return['stdout'].decode()
+            'extracted_text': utils.to_string(tesseract_return['stdout'])
         }
         return response.ResponseFormatter.format(response.ResponseErrorCode.OK,
                                                  response_content)
