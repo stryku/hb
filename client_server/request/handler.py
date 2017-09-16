@@ -1,4 +1,3 @@
-import response
 import scripts
 import tempfile
 import os
@@ -6,12 +5,14 @@ import utils
 import shutil
 import lite
 from request.request_type import *
+from response.response_err_code import *
+from response import response
 
 
 class PingRequestHandler:
     @staticmethod
     def handle(request_content):
-        return response.ResponseFormatter.format(response.ResponseErrorCode.OK,
+        return response.ResponseFormatter.format(ResponseErrorCode.OK,
                                                  'pong')
 
 
@@ -40,7 +41,7 @@ class ExtractFromReceiptRequestHandler:
             'extracted_text': utils.to_string(tesseract_return['stdout']),
             'receipt_id': utils.to_string(receipt_id)
         }
-        return response.ResponseFormatter.format(response.ResponseErrorCode.OK,
+        return response.ResponseFormatter.format(ResponseErrorCode.OK,
                                                  response_content)
 
     def post_success_actions(self, file, tesseract_return):
@@ -64,12 +65,12 @@ class ExtractFromReceiptRequestHandler:
                                                         request_content['file_data'])
         preprocess_return = self.preprocess_image(extracted_oryg_file)
         if preprocess_return['ret_code'] != 0:
-            return response.ResponseFormatter.format(response.ResponseErrorCode.PREPROCESSING_FAILED,
+            return response.ResponseFormatter.format(ResponseErrorCode.PREPROCESSING_FAILED,
                                                      preprocess_return)
 
         tesseract_return = scripts.tesseract(self.preprocessed_image_name)
         if tesseract_return['ret_code'] != 0:
-            return response.ResponseFormatter.format(response.ResponseErrorCode.TESSERACT_FAILED,
+            return response.ResponseFormatter.format(ResponseErrorCode.TESSERACT_FAILED,
                                                      tesseract_return)
 
         receipt_id = self.post_success_actions(extracted_oryg_file, tesseract_return)

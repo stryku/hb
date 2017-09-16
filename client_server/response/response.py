@@ -1,13 +1,4 @@
 from dicttoxml import dicttoxml
-from enum import Enum
-
-
-class ResponseErrorCode(Enum):
-    UNDEF = 0
-    OK = 1
-    NOK = 2
-    PREPROCESSING_FAILED = 3
-    TESSERACT_FAILES = 4
 
 
 class ResponseFormatter:
