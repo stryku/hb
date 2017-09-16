@@ -6,7 +6,7 @@ import os
 import utils
 import shutil
 import lite
-
+import re
 
 class PingRequestHandler:
     @staticmethod
@@ -42,11 +42,14 @@ class ExtractFromReceiptRequestHandler:
         return response.ResponseFormatter.format(response.ResponseErrorCode.OK,
                                                  response_content)
 
-    def post_success_actions(self, file):
+    def post_success_actions(self, file, tesseract_return):
         name_to_save = self.get_name_to_save(file)
         shutil.copy(file.name, 'data/received_images/' + name_to_save)
-        db = lite.connect()
-        db.cursor().execute("insert into Receipt (name, oryginal_name) values ('" + os.path.basename(file.name) +"', '" + name_to_save + " ');")
+        db = lite.Db()
+        db.execute("insert into Receipt (name, oryginal_name) values ('" + os.path.basename(file.name) + "', '" + name_to_save + "')")
+        inserted_id = db.last_id()
+        command = "insert into ExtractedReceiptTexts (receipt_id, txt) values ('" + str(inserted_id) + "', ?)"
+        db.get_cur().execute(command, (tesseract_return['stdout'],))
         db.commit()
         db.close()
 
@@ -63,7 +66,7 @@ class ExtractFromReceiptRequestHandler:
             return response.ResponseFormatter.format(response.ResponseErrorCode.TESSERACT_FAILED,
                                                      tesseract_return)
 
-        self.post_success_actions(extracted_oryg_file)
+        self.post_success_actions(extracted_oryg_file, tesseract_return)
         return self.format_success_response(tesseract_return)
 
 

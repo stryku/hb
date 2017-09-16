@@ -15,24 +15,41 @@ class ExtractedReceiptTextStatus(Enum):
     MERGED = 1
 
 
-def init(db):
-    db.execute('''CREATE TABLE IF NOT EXISTS Receipt
-(
-id INTEGER PRIMARY KEY,
-name varchar(255),
-oryginal_name varchar(255),
-status int DEFAULT 0
-);''')
-    db.execute('''CREATE TABLE IF NOT EXISTS ExtractedReceiptTexts
-(
-id INTEGER PRIMARY KEY,
-receipt_id int,
-txt text,
-status int DEFAULT 0
-);''')
+class Db:
+    def __init__(self):
+        self.db = lite.connect(DB_FILE)
+        self.cur = self.db.cursor()
+        self.execute('''CREATE TABLE IF NOT EXISTS Receipt
+            (
+            id INTEGER PRIMARY KEY,
+            name varchar(255),
+            oryginal_name varchar(255),
+            status int DEFAULT 0
+            );''')
+        self.execute('''CREATE TABLE IF NOT EXISTS ExtractedReceiptTexts
+            (
+            id INTEGER PRIMARY KEY,
+            receipt_id int,
+            txt text,
+            status int DEFAULT 0
+            );''')
 
+    def execute(self, command):
+        if not command.endswith(';'):
+            command += ';'
 
-def connect():
-    db = lite.connect(DB_FILE)
-    init(db)
-    return db
+        self.cur.execute(command)
+        self.db.commit()
+
+    def close(self):
+        self.db.close()
+
+    def last_id(self):
+        return self.cur.lastrowid
+
+    def get_cur(self):
+        return self.cur
+
+    def commit(self):
+        self.db.commit()
+
