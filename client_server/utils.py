@@ -38,7 +38,11 @@ def create_tmp_file(base_name):
     return tempfile.TemporaryFile(suffix=extension)
 
 
-def run_process(command):
+def run_process_split(command, cwd='.'):
+    return run_process(command.split(), cwd)
+
+
+def run_process(command, cwd='.'):
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = process.communicate()
 
