@@ -1,10 +1,10 @@
 import socket
-import request
-import request_handler
 import sys
 import traceback
+
+from request import request
+from request import request_handler
 import utils
-import lite
 
 
 def main():

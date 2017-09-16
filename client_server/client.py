@@ -1,5 +1,5 @@
 import socket
-import request
+from request import request
 import sys
 import utils
 
