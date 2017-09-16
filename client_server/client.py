@@ -1,12 +1,13 @@
 import socket
 from request import request
+from request.request_type import *
 import sys
 import utils
 
 
 def create_request():
     if len(sys.argv) == 1 or sys.argv[1] == 'ping':
-        return request.RequestFactory.create(request.RequestType.PING)
+        return request.RequestFactory.create(RequestType.PING)
 
     if sys.argv[1] == 'extract':
         b64_file = utils.read_file_as_b64(sys.argv[2])
@@ -14,7 +15,7 @@ def create_request():
             'filename': sys.argv[2],
             'file_data': b64_file.decode()
         }
-        return request.RequestFactory.create_full(request.RequestType.EXTRACT_FROM_RECEIPT.name,
+        return request.RequestFactory.create_full(RequestType.EXTRACT_FROM_RECEIPT.name,
                                                   content)
 
 

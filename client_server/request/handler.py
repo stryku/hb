@@ -1,11 +1,11 @@
 import response
-from request import request
 import scripts
 import tempfile
 import os
 import utils
 import shutil
 import lite
+from request.request_type import *
 
 
 class PingRequestHandler:
@@ -80,8 +80,8 @@ class RequestHandlerFactory:
     @staticmethod
     def create(request_type):
         return {
-            request.RequestType.PING: PingRequestHandler(),
-            request.RequestType.EXTRACT_FROM_RECEIPT: ExtractFromReceiptRequestHandler(),
+            RequestType.PING: PingRequestHandler(),
+            RequestType.EXTRACT_FROM_RECEIPT: ExtractFromReceiptRequestHandler(),
         }[request_type]
 
 

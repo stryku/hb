@@ -1,10 +1,9 @@
 import socket
 import sys
 import traceback
-
-from request import request
-from request import request_handler
 import utils
+from request import parser
+from request import handler
 
 
 def main():
@@ -22,8 +21,8 @@ def main():
                 print("accepted " + str(address))
 
                 message = utils.recv_msg(sc)
-                parsed_message = request.RequestMessageParser.parse(message)
-                handler_response = request_handler.RequestHandler.handle(parsed_message)
+                parsed_message = parser.RequestMessageParser.parse(message)
+                handler_response = handler.RequestHandler.handle(parsed_message)
                 utils.send_msg(sc, handler_response)
                 sc.close()
 
