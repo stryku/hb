@@ -2,14 +2,13 @@ from dicttoxml import dicttoxml
 
 
 class ResponseFormatter:
-    @staticmethod
-    def format_ready(response):
-        return dicttoxml(response, custom_root='resp', attr_type=False)
+    def __init__(self, requested):
+        self.requested = requested
 
-    @staticmethod
-    def format(code, content):
+    def format(self, code, content):
         response = {
+            'requested': self.requested.name,
             'code': code.name,
             'content': content
         }
-        return ResponseFormatter.format_ready(response)
+        return dicttoxml(response, custom_root='resp', attr_type=False)

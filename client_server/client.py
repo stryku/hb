@@ -4,6 +4,7 @@ from request.request_type import *
 import sys
 import utils
 from image import image
+from response import handler
 
 
 def create_request():
@@ -49,7 +50,8 @@ def main():
     req = create_request()
     utils.send_msg(s, req)
     resp = utils.recv_msg(s)
-    print('received response: ' + resp.decode())
+    handler.ResponseHandler.handle(resp)
+    #print('received response: ' + resp.decode())
     s.close()
 
 

@@ -1,13 +1,11 @@
 import base64
-import xml.etree.ElementTree as ET
 import utils
 from os import path
 
 
-def extract_iamge_from_message(message):
-    root = ET.fromstring(message.decode('ascii'))
-    filename_el = root.find('filename')
-    file_data_el = root.find('file_data')
+def extract_image_from_element(el):
+    filename_el = el.find('filename')
+    file_data_el = el.find('file_data')
     return {
         'filename': filename_el.text,
         'file_data': base64.b64decode(file_data_el.text)
@@ -20,3 +18,9 @@ def prepare_image_for_message(filename):
         'filename': path.basename(filename),
         'file_data': b64_file.decode()
     }
+
+
+def save_image_from_dict(img_dict):
+    file = open(img_dict['filename'], 'wb')
+    file.write(img_dict['file_data'])
+    file.close()
