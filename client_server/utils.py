@@ -3,6 +3,7 @@ import tempfile
 from os import path
 import base64
 import struct
+import time
 
 
 def to_string(data):
@@ -59,3 +60,7 @@ def recvall(sock, n):
             return None
         data += packet
     return data
+
+
+def current_milli_time():
+    return int(round(time.time() * 1000))

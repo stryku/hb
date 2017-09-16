@@ -4,6 +4,8 @@ import scripts
 import tempfile
 import os
 import utils
+import shutil
+import lite
 
 
 class PingRequestHandler:
@@ -18,20 +20,19 @@ class ExtractFromReceiptRequestHandler:
         self.temp_dir = tempfile.TemporaryDirectory()
         self.preprocessed_image_name = ''
 
+    def get_name_to_save(self, file):
+        return str(utils.current_milli_time()) + '_' + os.path.basename(file.name)
+
     def extract_to_tmp_image(self, oryginal_name, data):
         file = open(self.temp_dir.name + '/' + oryginal_name, 'wb')
         file.write(data)
         file.close()
-
-        saved_file = open('saved_' + oryginal_name, 'wb')
-        saved_file.write(data)
-        saved_file.close()
         return file
 
     def preprocess_image(self, oryginal_file):
         name = os.path.basename(oryginal_file.name)
         path = os.path.dirname(oryginal_file.name)
-        self.preprocessed_image_name = path + '/preprocessed_' + name
+        self.preprocessed_image_name = path + '/preprocessed_' + name + '.png'
         return scripts.textcleaner(oryginal_file.name, self.preprocessed_image_name)
 
     def format_success_response(self, tesseract_return):
@@ -40,6 +41,14 @@ class ExtractFromReceiptRequestHandler:
         }
         return response.ResponseFormatter.format(response.ResponseErrorCode.OK,
                                                  response_content)
+
+    def post_success_actions(self, file):
+        name_to_save = self.get_name_to_save(file)
+        shutil.copy(file.name, 'data/received_images/' + name_to_save)
+        db = lite.connect()
+        db.cursor().execute("insert into Receipt (name, oryginal_name) values ('" + os.path.basename(file.name) +"', '" + name_to_save + " ');")
+        db.commit()
+        db.close()
 
     def handle(self, request_content):
         extracted_oryg_file = self.extract_to_tmp_image(request_content['filename'],
@@ -54,6 +63,7 @@ class ExtractFromReceiptRequestHandler:
             return response.ResponseFormatter.format(response.ResponseErrorCode.TESSERACT_FAILED,
                                                      tesseract_return)
 
+        self.post_success_actions(extracted_oryg_file)
         return self.format_success_response(tesseract_return)
 
 

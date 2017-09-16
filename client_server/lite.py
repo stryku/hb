@@ -18,17 +18,17 @@ class ExtractedReceiptTextStatus(Enum):
 def init(db):
     db.execute('''CREATE TABLE IF NOT EXISTS Receipt
 (
-id int PRIMARY KEY,
-recv_time timestamp,
+id INTEGER PRIMARY KEY,
 name varchar(255),
-status int
+oryginal_name varchar(255),
+status int DEFAULT 0
 );''')
     db.execute('''CREATE TABLE IF NOT EXISTS ExtractedReceiptTexts
 (
-id int PRIMARY KEY,
+id INTEGER PRIMARY KEY,
 receipt_id int,
 txt text,
-status int
+status int DEFAULT 0
 );''')
 
 
