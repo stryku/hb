@@ -26,6 +26,14 @@ def create_request():
         return request.RequestFactory.create_full(RequestType.GET_RECEIPT_STATUS.name,
                                                   content)
 
+    if sys.argv[1] == 'text':
+        receipt_id = sys.argv[2]
+        content = {
+            'receipt_id': receipt_id
+        }
+        return request.RequestFactory.create_full(RequestType.GET_RECEIPT_TEXT.name,
+                                                  content)
+
     print("Unknown args: " + str(sys.argv))
 
 

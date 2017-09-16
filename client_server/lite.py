@@ -66,9 +66,9 @@ class NotFoundInDbException(Exception):
 
 class DbDataGetter:
     @staticmethod
-    def get_row(table, id):
+    def get_row(table, id, search_by_column='id'):
         db = Db()
-        db.execute("select * from " + table + " where id=" + id)
+        db.execute("select * from " + table + " where " + search_by_column + "=" + id)
         data = db.fetchall()
         if len(data) == 0:
             db.close()
@@ -78,6 +78,6 @@ class DbDataGetter:
         return data[0]
 
     @staticmethod
-    def get_field(table, column, id):
-        row = DbDataGetter.get_row(table, id)
+    def get_field(table, column, id, search_by_column='id'):
+        row = DbDataGetter.get_row(table, id, search_by_column)
         return row[column]

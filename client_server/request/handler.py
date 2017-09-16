@@ -94,6 +94,23 @@ class GetReceiptStatusHandler:
                                                      {'receipt_id': receipt_id})
 
 
+class GetReceiptTextHandler:
+    @staticmethod
+    def handle(request_content):
+        receipt_id = request_content['receipt_id']
+        try:
+            extracted_recepit_text = lite.DbDataGetter.get_field(lite.EXTRACTED_RECEIPTS_TEXTS_TABLE,
+                                                                 'txt',
+                                                                 receipt_id,
+                                                                 'receipt_id')
+            response_content = {'receipt_text': extracted_recepit_text}
+            return response.ResponseFormatter.format(ResponseErrorCode.OK, response_content)
+
+        except lite.NotFoundInDbException:
+            return response.ResponseFormatter.format(ResponseErrorCode.RECEIPT_ID_NOT_FOUND,
+                                                     {'receipt_id': receipt_id})
+
+
 class RequestHandlerFactory:
     @staticmethod
     def create(request_type):
@@ -101,6 +118,7 @@ class RequestHandlerFactory:
             RequestType.PING: PingRequestHandler(),
             RequestType.EXTRACT_FROM_RECEIPT: ExtractFromReceiptRequestHandler(),
             RequestType.GET_RECEIPT_STATUS: GetReceiptStatusHandler(),
+            RequestType.GET_RECEIPT_TEXT: GetReceiptTextHandler()
         }[request_type]
 
 
