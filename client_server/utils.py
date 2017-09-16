@@ -9,6 +9,8 @@ import time
 def to_string(data):
     if isinstance(data, str):
         return data
+    if isinstance(data, int):
+        return str(data)
     else:
         return data.decode()
 

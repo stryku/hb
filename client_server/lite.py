@@ -2,6 +2,8 @@ import sqlite3 as lite
 from enum import Enum
 
 DB_FILE = 'db/database.db'
+RECEIPTS_TABLE = 'Receipts'
+EXTRACTED_RECEIPTS_TEXTS_TABLE = 'ExtractedReceiptTexts'
 
 
 class ReceiptStatus(Enum):
@@ -19,14 +21,14 @@ class Db:
     def __init__(self):
         self.db = lite.connect(DB_FILE)
         self.cur = self.db.cursor()
-        self.execute('''CREATE TABLE IF NOT EXISTS Receipt
+        self.execute('''CREATE TABLE IF NOT EXISTS ''' + RECEIPTS_TABLE + '''
             (
             id INTEGER PRIMARY KEY,
             name varchar(255),
             oryginal_name varchar(255),
             status int DEFAULT 0
             );''')
-        self.execute('''CREATE TABLE IF NOT EXISTS ExtractedReceiptTexts
+        self.execute('''CREATE TABLE IF NOT EXISTS ''' + EXTRACTED_RECEIPTS_TEXTS_TABLE + '''
             (
             id INTEGER PRIMARY KEY,
             receipt_id int,

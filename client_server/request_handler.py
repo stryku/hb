@@ -6,7 +6,6 @@ import os
 import utils
 import shutil
 import lite
-import re
 
 class PingRequestHandler:
     @staticmethod
@@ -35,9 +34,10 @@ class ExtractFromReceiptRequestHandler:
         self.preprocessed_image_name = path + '/preprocessed_' + name + '.png'
         return scripts.textcleaner(oryginal_file.name, self.preprocessed_image_name)
 
-    def format_success_response(self, tesseract_return):
+    def format_success_response(self, tesseract_return, receipt_id):
         response_content = {
-            'extracted_text': utils.to_string(tesseract_return['stdout'])
+            'extracted_text': utils.to_string(tesseract_return['stdout']),
+            'receipt_id': utils.to_string(receipt_id)
         }
         return response.ResponseFormatter.format(response.ResponseErrorCode.OK,
                                                  response_content)
@@ -46,12 +46,17 @@ class ExtractFromReceiptRequestHandler:
         name_to_save = self.get_name_to_save(file)
         shutil.copy(file.name, 'data/received_images/' + name_to_save)
         db = lite.Db()
-        db.execute("insert into Receipt (name, oryginal_name) values ('" + os.path.basename(file.name) + "', '" + name_to_save + "')")
+        db.execute("insert into " +
+                   lite.RECEIPTS_TABLE +
+                   " (name, oryginal_name) values ('" + os.path.basename(file.name) + "', '" + name_to_save + "')")
         inserted_id = db.last_id()
-        command = "insert into ExtractedReceiptTexts (receipt_id, txt) values ('" + str(inserted_id) + "', ?)"
+        command = "insert into " + \
+                  lite.EXTRACTED_RECEIPTS_TEXTS_TABLE + \
+                  " (receipt_id, txt) values ('" + str(inserted_id) + "', ?)"
         db.get_cur().execute(command, (tesseract_return['stdout'],))
         db.commit()
         db.close()
+        return inserted_id
 
     def handle(self, request_content):
         extracted_oryg_file = self.extract_to_tmp_image(request_content['filename'],
@@ -66,8 +71,8 @@ class ExtractFromReceiptRequestHandler:
             return response.ResponseFormatter.format(response.ResponseErrorCode.TESSERACT_FAILED,
                                                      tesseract_return)
 
-        self.post_success_actions(extracted_oryg_file, tesseract_return)
-        return self.format_success_response(tesseract_return)
+        receipt_id = self.post_success_actions(extracted_oryg_file, tesseract_return)
+        return self.format_success_response(tesseract_return, receipt_id)
 
 
 class RequestHandlerFactory:
