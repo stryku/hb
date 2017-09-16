@@ -2,6 +2,7 @@ build/
 *.jpg
 *.png
 __pycache__/
+textcleaner
 
 .idea/
 
