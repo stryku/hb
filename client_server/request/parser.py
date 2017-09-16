@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
-import base64
 from request.request_type import *
+import utils
 
 
 class NoContentParser:
@@ -16,7 +16,7 @@ class ExtractFromReceiptContentParser:
         file_data_el = data.find('file_data')
         return {
             'filename': filename_el.text,
-            'file_data': base64.b64decode(file_data_el.text)
+            'file_data': utils.b64decode(file_data_el.text)
         }
 
 

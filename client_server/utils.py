@@ -6,6 +6,20 @@ import struct
 import time
 
 
+def b64encode(data):
+    if isinstance(data, str):
+        return base64.b64encode(data.encode(encoding='UTF-8')).decode()
+
+    return base64.b64encode(data).decode()
+
+
+def b64decode(data):
+    if isinstance(data, str):
+        return base64.b64decode(data)
+
+    return base64.b64decode(data.encode(encoding='UTF-8'))
+
+
 def to_string(data):
     if isinstance(data, str):
         return data
@@ -34,7 +48,7 @@ def run_process(command):
 def read_file_as_b64(filename):
     with open(filename, 'rb') as file:
         content = file.read()
-        return base64.b64encode(content)
+        return b64encode(content)
 
 
 def send_msg(sock, msg):

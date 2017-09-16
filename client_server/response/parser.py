@@ -111,7 +111,6 @@ class ResponseMessageParser:
         resp = ET.fromstring(data.decode('ascii'))
         code_el = resp.find('code')
         requested_el = resp.find('requested')
-        content_el = resp.find('content')
 
         code = ResponseErrorCode[code_el.text]
         requested = RequestType[requested_el.text]

@@ -131,7 +131,7 @@ class GetForCorrectionHandler:
             file_message_content = image.prepare_image_for_message(filename)
             response_content = {
                 'file': file_message_content,
-                'text': base64.b64encode(extracted_receipt_text.encode(encoding='UTF-8')).decode()
+                'text': utils.b64encode(extracted_receipt_text)
             }
             return formatter.format(ResponseErrorCode.OK, response_content)
 
