@@ -20,6 +20,7 @@ class ExtractedReceiptTextStatus(Enum):
 class Db:
     def __init__(self):
         self.db = lite.connect(DB_FILE)
+        self.db.row_factory = lite.Row
         self.cur = self.db.cursor()
         self.execute('''CREATE TABLE IF NOT EXISTS ''' + RECEIPTS_TABLE + '''
             (
@@ -54,4 +55,7 @@ class Db:
 
     def commit(self):
         self.db.commit()
+
+    def fetchall(self):
+        return self.cur.fetchall()
 

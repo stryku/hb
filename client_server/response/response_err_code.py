@@ -7,3 +7,5 @@ class ResponseErrorCode(Enum):
     NOK = 2
     PREPROCESSING_FAILED = 3
     TESSERACT_FAILED = 4
+    RECEIPT_ID_NOT_FOUND = 5
+    MULTIPLE_RECEIPTS_FOUND = 5

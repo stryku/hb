@@ -20,12 +20,22 @@ class ExtractFromReceiptContentParser:
         }
 
 
+class GetReceiptStatusContentParser:
+    @staticmethod
+    def parse(data):
+        receipt_id__el = data.find('receipt_id')
+        return {
+            'receipt_id': receipt_id__el.text,
+        }
+
+
 class RequestContentParserFactory:
     @staticmethod
     def create(request_type):
         return {
             RequestType.EXTRACT_FROM_RECEIPT: ExtractFromReceiptContentParser(),
-            RequestType.PING: NoContentParser()
+            RequestType.PING: NoContentParser(),
+            RequestType.GET_RECEIPT_STATUS: GetReceiptStatusContentParser()
         }[request_type]
 
 

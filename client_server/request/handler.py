@@ -77,12 +77,37 @@ class ExtractFromReceiptRequestHandler:
         return self.format_success_response(tesseract_return, receipt_id)
 
 
+class GetReceiptStatusHandler:
+    @staticmethod
+    def handle(request_content):
+        db = lite.Db()
+        db.execute("select * from " + lite.RECEIPTS_TABLE + " where id=" + request_content['receipt_id'])
+        data = db.fetchall()
+        if len(data) == 0:
+            return response.ResponseFormatter.format(ResponseErrorCode.RECEIPT_ID_NOT_FOUND,
+                                                     {'receipt_id': request_content['receipt_id']})
+
+        if len(data) > 1:
+            return response.ResponseFormatter.format(ResponseErrorCode.MULTIPLE_RECEIPTS_FOUND,
+                                                     {'receipt_id': request_content['receipt_id']})
+
+        found_receipt = data[0]
+
+        response_content = {
+            'receipt_status': lite.ReceiptStatus(int(found_receipt['status'])).name
+        }
+
+        return response.ResponseFormatter.format(ResponseErrorCode.OK,
+                                                 response_content)
+
+
 class RequestHandlerFactory:
     @staticmethod
     def create(request_type):
         return {
             RequestType.PING: PingRequestHandler(),
             RequestType.EXTRACT_FROM_RECEIPT: ExtractFromReceiptRequestHandler(),
+            RequestType.GET_RECEIPT_STATUS: GetReceiptStatusHandler(),
         }[request_type]
 
 
