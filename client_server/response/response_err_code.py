@@ -6,4 +6,4 @@ class ResponseErrorCode(Enum):
     OK = 1
     NOK = 2
     PREPROCESSING_FAILED = 3
-    TESSERACT_FAILES = 4
+    TESSERACT_FAILED = 4
