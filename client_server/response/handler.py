@@ -30,6 +30,7 @@ class ResponseHandlerFactory:
             RequestType.GET_RECEIPT_STATUS: PrintResponseHandler(),
             RequestType.GET_RECEIPT_TEXT: PrintResponseHandler(),
             RequestType.GET_FOR_CORRECTION: GetForCorrectionResponseHandler(),
+            RequestType.CORRECT_TEXT: PrintResponseHandler()
         }[request_type]
 
 

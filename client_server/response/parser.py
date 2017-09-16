@@ -25,6 +25,12 @@ class ProcessOutputParser:
         }
 
 
+class NoContentResponseParser:
+    @staticmethod
+    def parse(resp):
+        return '<<NO CONTENT>>'
+
+
 class PingResponseParser:
     @staticmethod
     def parse(resp):
@@ -101,14 +107,15 @@ class ResponseContentParserFactory:
             RequestType.EXTRACT_FROM_RECEIPT: ExtractFromReceiptResponseParser(),
             RequestType.GET_RECEIPT_STATUS: GetReceiptStatusResponseParser(),
             RequestType.GET_RECEIPT_TEXT: GetReceiptTextResponseParser(),
-            RequestType.GET_FOR_CORRECTION: GetForCorrectionResponseParser()
+            RequestType.GET_FOR_CORRECTION: GetForCorrectionResponseParser(),
+            RequestType.CORRECT_TEXT: NoContentResponseParser()
         }[requested]
 
 
 class ResponseMessageParser:
     @staticmethod
     def parse(data):
-        resp = ET.fromstring(data.decode('ascii'))
+        resp = ET.fromstring(data.decode('UTF-8'))
         code_el = resp.find('code')
         requested_el = resp.find('requested')
 
