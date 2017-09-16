@@ -41,6 +41,16 @@ def create_request():
         return request.RequestFactory.create_full(RequestType.GET_FOR_CORRECTION.name,
                                                   content)
 
+    if sys.argv[1] == 'correct':
+        receipt_id = sys.argv[2]
+        txt_filename = sys.argv[3]
+        content = {
+            'receipt_id': receipt_id,
+            'text': utils.read_file_as_b64(txt_filename)
+        }
+        return request.RequestFactory.create_full(RequestType.CORRECT_TEXT.name,
+                                                  content)
+
     print("Unknown args: " + str(sys.argv))
 
 

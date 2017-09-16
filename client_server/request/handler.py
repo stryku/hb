@@ -140,6 +140,36 @@ class GetForCorrectionHandler:
                                     {'receipt_id': receipt_id})
 
 
+class CorrectTextHandler:
+    @staticmethod
+    def update_text(receipt_id, text):
+        lite.DbDataUpdater.update_field(lite.EXTRACTED_RECEIPTS_TEXTS_TABLE,
+                                        'txt',
+                                        text,
+                                        receipt_id,
+                                        'receipt_id')
+
+    @staticmethod
+    def update_receipt(receipt_id):
+        lite.DbDataUpdater.update_field(lite.RECEIPTS_TABLE,
+                                        'status',
+                                        lite.ReceiptStatus.CORRECTED.value,
+                                        receipt_id)
+
+    @staticmethod
+    def handle(request_content, formatter):
+        receipt_id = request_content['receipt_id']
+        text = request_content['text']
+        try:
+            CorrectTextHandler.update_text(receipt_id, text)
+            CorrectTextHandler.update_receipt(receipt_id)
+            return formatter.format(ResponseErrorCode.OK, {})
+
+        except lite.NotFoundInDbException:
+            return formatter.format(ResponseErrorCode.RECEIPT_ID_NOT_FOUND,
+                                    {'receipt_id': receipt_id})
+
+
 class RequestHandlerFactory:
     @staticmethod
     def create(request_type):
@@ -149,6 +179,7 @@ class RequestHandlerFactory:
             RequestType.GET_RECEIPT_STATUS: GetReceiptStatusHandler(),
             RequestType.GET_RECEIPT_TEXT: GetReceiptTextHandler(),
             RequestType.GET_FOR_CORRECTION: GetForCorrectionHandler(),
+            RequestType.CORRECT_TEXT: CorrectTextHandler()
         }[request_type]
 
 

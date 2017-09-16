@@ -8,7 +8,7 @@ def extract_image_from_element(el):
     file_data_el = el.find('file_data')
     return {
         'filename': filename_el.text,
-        'file_data': base64.b64decode(file_data_el.text)
+        'file_data': utils.b64decode(file_data_el.text)
     }
 
 
@@ -16,7 +16,7 @@ def prepare_image_for_message(filename):
     b64_file = utils.read_file_as_b64(filename)
     return {
         'filename': path.basename(filename),
-        'file_data': b64_file.decode()
+        'file_data': b64_file
     }
 
 

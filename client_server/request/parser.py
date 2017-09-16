@@ -23,9 +23,20 @@ class ExtractFromReceiptContentParser:
 class ReceiptIdContentParser:
     @staticmethod
     def parse(data):
-        receipt_id__el = data.find('receipt_id')
+        receipt_id_el = data.find('receipt_id')
         return {
-            'receipt_id': receipt_id__el.text,
+            'receipt_id': receipt_id_el.text,
+        }
+
+
+class CorrectTextContentParser:
+    @staticmethod
+    def parse(data):
+        receipt_id_el = data.find('receipt_id')
+        text_el = data.find('text')
+        return {
+            'receipt_id': receipt_id_el.text,
+            'text': utils.b64decodestr(text_el.text)
         }
 
 
@@ -37,7 +48,8 @@ class RequestContentParserFactory:
             RequestType.PING: NoContentParser(),
             RequestType.GET_RECEIPT_STATUS: ReceiptIdContentParser(),
             RequestType.GET_RECEIPT_TEXT: ReceiptIdContentParser(),
-            RequestType.GET_FOR_CORRECTION: ReceiptIdContentParser()
+            RequestType.GET_FOR_CORRECTION: ReceiptIdContentParser(),
+            RequestType.CORRECT_TEXT: CorrectTextContentParser()
         }[request_type]
 
 

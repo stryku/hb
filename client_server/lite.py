@@ -44,6 +44,13 @@ class Db:
         self.cur.execute(command)
         self.db.commit()
 
+    def execute_escaped(self, command, escaped):
+        if not command.endswith(';'):
+            command += ';'
+
+        self.cur.execute(command, escaped)
+        self.db.commit()
+
     def close(self):
         self.db.close()
 
@@ -81,3 +88,11 @@ class DbDataGetter:
     def get_field(table, column, id, search_by_column='id'):
         row = DbDataGetter.get_row(table, id, search_by_column)
         return row[column]
+
+
+class DbDataUpdater:
+    @staticmethod
+    def update_field(table, column, data, key, key_column='id'):
+        db = Db()
+        db.execute_escaped("update " + table + " set " + column + "=? where " + key_column + "=?", (data, key))
+        db.close()

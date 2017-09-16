@@ -20,6 +20,10 @@ def b64decode(data):
     return base64.b64decode(data.encode(encoding='UTF-8'))
 
 
+def b64decodestr(data):
+    return b64decode(data).decode()
+
+
 def to_string(data):
     if isinstance(data, str):
         return data
@@ -45,10 +49,13 @@ def run_process(command):
     }
 
 
+def read_whole_file(filename, mode='r'):
+    with open(filename, mode) as file:
+        return file.read()
+
+
 def read_file_as_b64(filename):
-    with open(filename, 'rb') as file:
-        content = file.read()
-        return b64encode(content)
+    return b64encode(read_whole_file(filename, 'rb'))
 
 
 def send_msg(sock, msg):
