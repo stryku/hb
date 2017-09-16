@@ -7,6 +7,7 @@ import lite
 from request.request_type import *
 from response.response_err_code import *
 from response import response
+from image import image
 
 
 class PingRequestHandler:
@@ -50,7 +51,7 @@ class ExtractFromReceiptRequestHandler:
         db = lite.Db()
         db.execute("insert into " +
                    lite.RECEIPTS_TABLE +
-                   " (name, oryginal_name) values ('" + os.path.basename(file.name) + "', '" + name_to_save + "')")
+                   " (name, oryginal_name) values ('" + name_to_save + "', '" + os.path.basename(file.name) + "')")
         inserted_id = db.last_id()
         command = "insert into " + \
                   lite.EXTRACTED_RECEIPTS_TEXTS_TABLE + \
@@ -111,6 +112,32 @@ class GetReceiptTextHandler:
                                                      {'receipt_id': receipt_id})
 
 
+class GetForCorrectionHandler:
+    @staticmethod
+    def handle(request_content):
+        receipt_id = request_content['receipt_id']
+        try:
+            filename = lite.DbDataGetter.get_field(lite.RECEIPTS_TABLE,
+                                                   'name',
+                                                   receipt_id)
+            extracted_receipt_text = lite.DbDataGetter.get_field(lite.EXTRACTED_RECEIPTS_TEXTS_TABLE,
+                                                                 'txt',
+                                                                 receipt_id,
+                                                                 'receipt_id')
+
+            filename = 'data/received_images/' + filename
+            file_message_content = image.prepare_image_for_message(filename)
+            response_content = {
+                'file': file_message_content,
+                'text': extracted_receipt_text
+            }
+            return response.ResponseFormatter.format(ResponseErrorCode.OK, response_content)
+
+        except lite.NotFoundInDbException:
+            return response.ResponseFormatter.format(ResponseErrorCode.RECEIPT_ID_NOT_FOUND,
+                                                     {'receipt_id': receipt_id})
+
+
 class RequestHandlerFactory:
     @staticmethod
     def create(request_type):
@@ -118,7 +145,8 @@ class RequestHandlerFactory:
             RequestType.PING: PingRequestHandler(),
             RequestType.EXTRACT_FROM_RECEIPT: ExtractFromReceiptRequestHandler(),
             RequestType.GET_RECEIPT_STATUS: GetReceiptStatusHandler(),
-            RequestType.GET_RECEIPT_TEXT: GetReceiptTextHandler()
+            RequestType.GET_RECEIPT_TEXT: GetReceiptTextHandler(),
+            RequestType.GET_FOR_CORRECTION: GetForCorrectionHandler(),
         }[request_type]
 
 

@@ -36,7 +36,8 @@ class RequestContentParserFactory:
             RequestType.EXTRACT_FROM_RECEIPT: ExtractFromReceiptContentParser(),
             RequestType.PING: NoContentParser(),
             RequestType.GET_RECEIPT_STATUS: ReceiptIdContentParser(),
-            RequestType.GET_RECEIPT_TEXT: ReceiptIdContentParser()
+            RequestType.GET_RECEIPT_TEXT: ReceiptIdContentParser(),
+            RequestType.GET_FOR_CORRECTION: ReceiptIdContentParser()
         }[request_type]
 
 

@@ -7,3 +7,4 @@ class RequestType(Enum):
     PING = 2
     GET_RECEIPT_STATUS = 3
     GET_RECEIPT_TEXT = 4
+    GET_FOR_CORRECTION = 5
