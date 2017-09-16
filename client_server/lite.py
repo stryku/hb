@@ -59,3 +59,25 @@ class Db:
     def fetchall(self):
         return self.cur.fetchall()
 
+
+class NotFoundInDbException(Exception):
+    pass
+
+
+class DbDataGetter:
+    @staticmethod
+    def get_row(table, id):
+        db = Db()
+        db.execute("select * from " + table + " where id=" + id)
+        data = db.fetchall()
+        if len(data) == 0:
+            db.close()
+            raise NotFoundInDbException()
+
+        db.close()
+        return data[0]
+
+    @staticmethod
+    def get_field(table, column, id):
+        row = DbDataGetter.get_row(table, id)
+        return row[column]

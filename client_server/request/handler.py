@@ -80,25 +80,18 @@ class ExtractFromReceiptRequestHandler:
 class GetReceiptStatusHandler:
     @staticmethod
     def handle(request_content):
-        db = lite.Db()
-        db.execute("select * from " + lite.RECEIPTS_TABLE + " where id=" + request_content['receipt_id'])
-        data = db.fetchall()
-        if len(data) == 0:
+        receipt_id = request_content['receipt_id']
+        try:
+            receipt_status_ret = lite.DbDataGetter.get_field(lite.RECEIPTS_TABLE,
+                                                             'status',
+                                                             receipt_id)
+            receipt_status = lite.ReceiptStatus(int(receipt_status_ret))
+            response_content = {'receipt_status': receipt_status.name}
+            return response.ResponseFormatter.format(ResponseErrorCode.OK, response_content)
+
+        except lite.NotFoundInDbException:
             return response.ResponseFormatter.format(ResponseErrorCode.RECEIPT_ID_NOT_FOUND,
-                                                     {'receipt_id': request_content['receipt_id']})
-
-        if len(data) > 1:
-            return response.ResponseFormatter.format(ResponseErrorCode.MULTIPLE_RECEIPTS_FOUND,
-                                                     {'receipt_id': request_content['receipt_id']})
-
-        found_receipt = data[0]
-
-        response_content = {
-            'receipt_status': lite.ReceiptStatus(int(found_receipt['status'])).name
-        }
-
-        return response.ResponseFormatter.format(ResponseErrorCode.OK,
-                                                 response_content)
+                                                     {'receipt_id': receipt_id})
 
 
 class RequestHandlerFactory:
