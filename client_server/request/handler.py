@@ -180,7 +180,7 @@ class CorrectTextHandler:
 
         bot.add_all()
         bot.commit('update tesseract training text')
-        bot.push_all()
+        bot.push_last_branch()
 
     @staticmethod
     def handle(request_content, formatter):

@@ -27,7 +27,7 @@ class StrykuBot:
         self.commit_prefix = '[stryku-bot]: '
         self.last_branch = ''
         file = open('strykubot.password')
-        self.password = file.read().stip()
+        self.password = file.read().strip()
         file.close()
 
     def clone_repo(self, repo_name, dest='build', rm_old=True):
