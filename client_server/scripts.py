@@ -10,6 +10,6 @@ def textcleaner(in_file, out_file):
 
 
 def tesseract(filename):
-    command = [consts.SCRIPTS_DIR + 'run_tesseract.sh',
-               filename]
+    command = ['tesseract', '-l', 'hb', '--tessdata-dir', '.', filename, 'stdout']
     return utils.run_process(command)
+
