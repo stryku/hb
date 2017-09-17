@@ -174,7 +174,7 @@ class CorrectTextHandler:
         tess_dir = repo_dir + '/image_processing/tesseract'
         tess_dir = os.path.abspath(tess_dir)
         with open(tess_dir + '/training_text.txt', 'a') as file:
-            file.write(text)
+            file.write('\n\n' + text)
 
         utils.run_process_split(tess_dir + '/run_trainer.sh ' + tess_dir)
 
