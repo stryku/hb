@@ -1,3 +1,4 @@
 #!/bin/bash
 
-tesseract -l hb --tessdata-dir . $1 stdout
+(export TESSDATA_PREFIX=..; tesseract -l hb $1 stdout)
+
