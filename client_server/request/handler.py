@@ -170,12 +170,13 @@ class CorrectTextHandler:
         bot = strykubot.StrykuBot()
         bot.clone_tmp_repo('hb')
         bot.checkout_branch('str-bot-training_text')
-        repo_dir = bot.repo_dir()
+        repo_dir = bot.get_repo_dir()
         tess_dir = repo_dir + '/image_processing/tesseract'
-        with open(tess_dir + 'training_text.txt', 'a') as file:
+        tess_dir = os.path.abspath(tess_dir)
+        with open(tess_dir + '/training_text.txt', 'a') as file:
             file.write(text)
 
-        utils.run_process_split("run_trainer.sh", cwd=tess_dir)
+        utils.run_process_split(tess_dir + '/run_trainer.sh ' + tess_dir)
 
         bot.add_all()
         bot.commit('update tesseract training text')
@@ -184,7 +185,9 @@ class CorrectTextHandler:
     @staticmethod
     def handle(request_content, formatter):
         try:
-            CorrectTextHandler.update_db(request_content, formatter)
+            resp = CorrectTextHandler.update_db(request_content, formatter)
+            CorrectTextHandler.update_repo(request_content['text'])
+            return resp
 
         except lite.NotFoundInDbException:
             return formatter.format(ResponseErrorCode.RECEIPT_ID_NOT_FOUND,

@@ -24,6 +24,7 @@ class StrykuBot:
         self.tmp_repo_dir = None
         self.repo = None
         self.git = None
+        self.commit_prefix = '[stryku-bot]: '
         file = open('strykubot.password')
         self.password = file.read()
         file.close()
@@ -54,11 +55,11 @@ class StrykuBot:
         self.git.checkout('HEAD', b=branch)
 
     def commit(self, msg):
-        self.git.commit(m=msg)
+        self.git.commit(m=self.commit_prefix + msg)
 
     def push_all(self):
-        command = ('git push https://stryku-bot%s:@github.com/stryku/%s --all' % (self.password, self.repo_name))
-        utils.run_process_split(command, cwd=self.repo_dir)
+        command = ('git push https://stryku-bot:%s@github.com/stryku/%s --all' % (self.password, self.repo_name))
+        print(utils.run_process_split(command, cwd=self.repo_dir))
 
-    def repo_dir(self):
+    def get_repo_dir(self):
         return self.repo_dir
