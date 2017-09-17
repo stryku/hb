@@ -10,6 +10,7 @@ from request.request_type import *
 from response.response_err_code import *
 from response import response
 from image import image
+from strbot import strykubot
 
 
 class PingRequestHandler:
@@ -142,6 +143,14 @@ class GetForCorrectionHandler:
 
 class CorrectTextHandler:
     @staticmethod
+    def update_db(request_content, formatter):
+        receipt_id = request_content['receipt_id']
+        text = request_content['text']
+        CorrectTextHandler.update_text(receipt_id, text)
+        CorrectTextHandler.update_receipt(receipt_id)
+        return formatter.format(ResponseErrorCode.OK, {})
+
+    @staticmethod
     def update_text(receipt_id, text):
         lite.DbDataUpdater.update_field(lite.EXTRACTED_RECEIPTS_TEXTS_TABLE,
                                         'txt',
@@ -157,17 +166,29 @@ class CorrectTextHandler:
                                         receipt_id)
 
     @staticmethod
+    def update_repo(text):
+        bot = strykubot.StrykuBot()
+        bot.clone_tmp_repo('hb')
+        bot.checkout_branch('str-bot-training_text')
+        repo_dir = bot.repo_dir()
+        tess_dir = repo_dir + '/image_processing/tesseract'
+        with open(tess_dir + 'training_text.txt', 'a') as file:
+            file.write(text)
+
+        utils.run_process_split("run_trainer.sh", cwd=tess_dir)
+
+        bot.add_all()
+        bot.commit('update tesseract training text')
+        bot.push_all()
+
+    @staticmethod
     def handle(request_content, formatter):
-        receipt_id = request_content['receipt_id']
-        text = request_content['text']
         try:
-            CorrectTextHandler.update_text(receipt_id, text)
-            CorrectTextHandler.update_receipt(receipt_id)
-            return formatter.format(ResponseErrorCode.OK, {})
+            CorrectTextHandler.update_db(request_content, formatter)
 
         except lite.NotFoundInDbException:
             return formatter.format(ResponseErrorCode.RECEIPT_ID_NOT_FOUND,
-                                    {'receipt_id': receipt_id})
+                                    {'receipt_id': request_content['receipt_id']})
 
 
 class RequestHandlerFactory:

@@ -24,9 +24,9 @@ class StrykuBot:
         self.tmp_repo_dir = None
         self.repo = None
         self.git = None
-
-    def set_password(self, passw):
-        self.password = passw
+        file = open('strykubot.password')
+        self.password = file.read()
+        file.close()
 
     def clone_repo(self, repo_name, dest='build', rm_old=True):
         if rm_old:
@@ -53,8 +53,11 @@ class StrykuBot:
     def checkout_branch(self, branch):
         self.git.checkout('HEAD', b=branch)
 
+    def commit(self, msg):
+        self.git.commit(m=msg)
+
     def push_all(self):
-        command = ('git push https://stryku-bot%s:@github.com/stryku/%s --all' % self.password, self.repo_name)
+        command = ('git push https://stryku-bot%s:@github.com/stryku/%s --all' % (self.password, self.repo_name))
         utils.run_process_split(command, cwd=self.repo_dir)
 
     def repo_dir(self):
