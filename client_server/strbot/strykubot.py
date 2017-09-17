@@ -25,8 +25,9 @@ class StrykuBot:
         self.repo = None
         self.git = None
         self.commit_prefix = '[stryku-bot]: '
+        self.last_branch = ''
         file = open('strykubot.password')
-        self.password = file.read()
+        self.password = file.read().stip()
         file.close()
 
     def clone_repo(self, repo_name, dest='build', rm_old=True):
@@ -52,14 +53,19 @@ class StrykuBot:
         self.git.add('--all')
 
     def checkout_branch(self, branch):
-        self.git.create_head(branch)
-        self.git.checkout('HEAD', b=branch)
+        self.last_branch = branch
+        try:
+            self.git.checkout('HEAD', b=branch)
+        except Exception:
+            print("Branch already exist. Remove and create a new one")
+            self.git.branch('-D', branch)
+            self.git.checkout('HEAD', b=branch)
 
     def commit(self, msg):
         self.git.commit(m=self.commit_prefix + msg)
 
-    def push_all(self):
-        command = ('git push https://stryku-bot:%s@github.com/stryku/%s --all' % (self.password, self.repo_name))
+    def push_last_branch(self):
+        command = ('git push https://stryku-bot:%s@github.com/stryku/%s %s' % (self.password, self.repo_name, self.last_branch))
         print(utils.run_process_split(command, cwd=self.repo_dir))
 
     def get_repo_dir(self):
