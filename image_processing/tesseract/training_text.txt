@@ -46,3 +46,26 @@ Punkty przed trans
 www.tesco.pl Infolinia 800 105 104
 Paragon updaszcza złożenie reklamacji
 Nr rejestrowy GIOS E0002020WZBW
+
+
+Chimney Cake Bakery
+   ul. Oławska 4
+   50-123 Wrocław
+   NIP 5095901812
+
+2017-09-17 16:18              45758
+       PARAGON FISKALNY
+KRÓWKA/MIGDAŁ              1 x11,00 11,00B
+CIASTECZKA BELGIJSKIE      1 x11,00 11,00B
+------------------------------------------
+SPRZEDAŻ OPODATKOWANA B              22,00
+PTU B 8,00 %                          1,63
+SUMA PTU                              1,63
+SUMA PLN                             22,00
+00092  #001 KIEROWNIK     2017-09-17 16:18
+ C04A104A1FB4D51299E5B593C68977E59190F14
+            CAC 1501235242389
+
+Karta                                22,00
+
+Nr transakcji                   2874 97881
