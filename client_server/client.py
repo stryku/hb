@@ -26,7 +26,7 @@ def create_request():
                                                   content)
 
     if sys.argv[2] == 'text':
-        receipt_id = sys.argv[2]
+        receipt_id = sys.argv[3]
         content = {
             'receipt_id': receipt_id
         }
@@ -34,7 +34,7 @@ def create_request():
                                                   content)
 
     if sys.argv[2] == 'get_for_correction' or sys.argv[2] == 'gfc':
-        receipt_id = sys.argv[2]
+        receipt_id = sys.argv[3]
         content = {
             'receipt_id': receipt_id
         }

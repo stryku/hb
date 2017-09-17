@@ -52,6 +52,7 @@ class StrykuBot:
         self.git.add('--all')
 
     def checkout_branch(self, branch):
+        self.git.create_head(branch)
         self.git.checkout('HEAD', b=branch)
 
     def commit(self, msg):
