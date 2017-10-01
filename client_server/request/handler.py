@@ -167,7 +167,7 @@ class CorrectTextHandler:
     @staticmethod
     def update_repo(text):
         bot = strykubot.StrykuBot()
-        bot.clone_repo('hb', 'cloned')
+        bot.clone_tmp_repo('hb')
         bot.checkout_branch('str-bot-training_text')
         repo_dir = bot.get_repo_dir()
         tess_dir = repo_dir + '/image_processing/tesseract'
