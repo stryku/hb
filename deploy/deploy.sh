@@ -9,10 +9,10 @@ mkdir $SCRIPTS_DIR
 mkdir $DB_DIR
 mkdir -p $SAVED_IMAGES_DIR
 
-cp ../image_processing/preprocess/run_cleaner.sh $SCRIPTS_DIR/run_cleaner.sh
-cp ../image_processing/tesseract/run_tesseract.sh $SCRIPTS_DIR/run_tesseract.sh
-cp -r ../image_processing/tesseract/tessdata $DEPLOY_DIR/tessdata
-cp update_to_repo.sh $DEPLOY_DIR
+yes | cp -rf ../image_processing/preprocess/run_cleaner.sh $SCRIPTS_DIR/run_cleaner.sh
+yes | cp -rf ../image_processing/tesseract/run_tesseract.sh $SCRIPTS_DIR/run_tesseract.sh
+yes | cp -rf ../image_processing/tesseract/tessdata $DEPLOY_DIR/tessdata
+yes | cp update_to_repo.sh $DEPLOY_DIR
 
 rsync -avm --include='*.py' -f 'hide,! */' ../client_server/ $DEPLOY_DIR
 
