@@ -15,7 +15,8 @@ cd $REPO_DIR
 git clone $REPO_URL
 
 echo '[DEPLOY]'
-$REPO_DIR/hb/deploy/deploy.sh $DEPLOY_DIR
+cd $REPO_DIR/hb/deploy/
+./deploy.sh $DEPLOY_DIR
 
 echo '[RM REPO DIRECTORY]'
 rm -rf $REPO_DIR
