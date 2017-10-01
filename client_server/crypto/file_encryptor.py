@@ -5,7 +5,7 @@ import utils
 
 class EncryptedFile:
     def __init__(self, filename=None, sufix = '.encrypted'):
-        key = utils.read_whole_file('aes.password', 'r')
+        key = utils.read_whole_file('aes.password', 'r').strip()
         self.cipher = AESCipher(key)
         self.base_filename = filename
         self.sufix = sufix
