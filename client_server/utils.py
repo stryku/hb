@@ -17,7 +17,7 @@ def b64decode(data):
     if isinstance(data, str):
         return base64.b64decode(data)
 
-    return base64.b64decode(data.encode(encoding='UTF-8'))
+    return base64.b64decode(data.decode(encoding='UTF-8'))
 
 
 def b64decodestr(data):
@@ -31,6 +31,13 @@ def to_string(data):
         return str(data)
     else:
         return data.decode()
+
+
+def to_bytes(data):
+    if isinstance(data, str):
+        return data.encode()
+
+    return data
 
 
 def create_tmp_file(base_name):

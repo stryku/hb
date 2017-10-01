@@ -1,4 +1,3 @@
-import base64
 import utils
 from os import path
 

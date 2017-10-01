@@ -1,5 +1,3 @@
-import base64
-
 import scripts
 import tempfile
 import os
@@ -11,6 +9,7 @@ from response.response_err_code import *
 from response import response
 from image import image
 from strbot import strykubot
+from crypto.file_encryptor import EncryptedFile
 
 
 class PingRequestHandler:
@@ -168,15 +167,25 @@ class CorrectTextHandler:
     @staticmethod
     def update_repo(text):
         bot = strykubot.StrykuBot()
-        bot.clone_tmp_repo('hb')
+        bot.clone_repo('hb', 'cloned')
         bot.checkout_branch('str-bot-training_text')
         repo_dir = bot.get_repo_dir()
         tess_dir = repo_dir + '/image_processing/tesseract'
         tess_dir = os.path.abspath(tess_dir)
-        with open(tess_dir + '/training_text.txt', 'a') as file:
+        training_text_filename = tess_dir + '/training_text.txt'
+        encrypted_file = EncryptedFile(training_text_filename)
+        encrypted_file.decrypt_to_file()
+        with open(training_text_filename, 'a') as file:
             file.write('\n\n' + text)
 
         utils.run_process_split(tess_dir + '/run_trainer.sh ' + tess_dir)
+
+        encrypted_file.encrypt_file(training_text_filename)
+        encrypted_file.close()
+
+        tessdata_filename = tess_dir + '/tessdata/hb.traineddata'
+        encrypted_file.encrypt_file(tessdata_filename)
+        encrypted_file.close()
 
         bot.add_all()
         bot.commit('update tesseract training text')
