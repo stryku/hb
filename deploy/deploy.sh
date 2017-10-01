@@ -13,6 +13,7 @@ yes | cp -rf ../image_processing/preprocess/run_cleaner.sh $SCRIPTS_DIR/run_clea
 yes | cp -rf ../image_processing/tesseract/run_tesseract.sh $SCRIPTS_DIR/run_tesseract.sh
 yes | cp -rf ../image_processing/tesseract/tessdata $DEPLOY_DIR/tessdata
 yes | cp update_to_repo.sh $DEPLOY_DIR
+yes | cp backup.sh $DEPLOY_DIR
 
 rsync -avm --include='*.py' -f 'hide,! */' ../client_server/ $DEPLOY_DIR
 
