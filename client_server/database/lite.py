@@ -31,12 +31,9 @@ class Db:
 
         return command
 
-    def _create_table(self, metadata):
-        self.execute(metadata.get_creation_query())
-
     def _create_tables(self):
         for table_type in TableType:
-            self._create_table(CreationQueryFactory.create(table_type))
+            self.execute(CreationQueryFactory.create(table_type))
 
     def execute(self, command):
         command = Db._add_semicolon(command)
