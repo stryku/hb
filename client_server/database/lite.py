@@ -34,8 +34,8 @@ class Db:
         self.execute(metadata.get_creation_query())
 
     def _create_tables(self):
-        self._create_table(CreationQueryFactory.create(TableType.RECEIPTS))
-        self._create_table(CreationQueryFactory.create(TableType.EXTRACTED_RECEIPTS_TEXTS))
+        for table_type in TableType:
+            self._create_table(CreationQueryFactory.create(table_type))
 
     def execute(self, command):
         command = Db._add_semicolon(command)
