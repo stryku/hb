@@ -27,7 +27,7 @@ else
 fi
 
 
-CLIENT_SERVER_DIR=$REPO_DIR/hb/client_server
+CLIENT_SERVER_DIR=$REPO_DIR/hb/client_server/
 
 echo '[DEPLOY]'
 cd $REPO_DIR/hb/deploy/
