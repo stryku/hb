@@ -41,7 +41,7 @@ class CreationQueryFactory:
     def _create_from_metadata(metadata):
         return CreationQueryBuilder() \
             .with_columns(metadata.get_columns()) \
-            .with_table_name(metadata.get_table_name()) \
+            .with_table_name(metadata.get_name()) \
             .build()
 
     @staticmethod
