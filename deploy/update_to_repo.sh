@@ -18,6 +18,7 @@ git clone $REPO_URL
 
 if [$BRANCH != '']
 then
+    echo '[GIT] checking out to '$BRANCH
     git checkout $BRANCH
 fi
 
