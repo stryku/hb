@@ -48,11 +48,12 @@ def create_request():
             'receipt_id': receipt_id,
             'text': utils.read_file_as_b64(txt_filename)
         }
+
         return request.RequestFactory.create_full(RequestType.CORRECT_TEXT.name,
                                                   content)
 
     if sys.argv[2] == 'tables':
-        return request.RequestFactory.create(RequestType.DB_GET_TABLES.name)
+        return request.RequestFactory.create(RequestType.DB_GET_TABLES)
 
     print("Unknown args: " + str(sys.argv))
 
