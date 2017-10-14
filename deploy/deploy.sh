@@ -15,6 +15,17 @@ yes | cp -rfi ../image_processing/tesseract/tessdata $DEPLOY_DIR/tessdata
 yes | cp -rfi update_to_repo.sh $DEPLOY_DIR
 yes | cp -rfi backup.sh $DEPLOY_DIR
 
-rsync -avm --include='*.py' -f 'hide,! */' ../client_server/ $DEPLOY_DIR
+RSYNC_FROM=$PWD'/../client_server/'
+RSYNC_TO=$DEPLOY_DIR
+
+echo
+echo
+echo '[rsync]'
+PWD=`pwd`
+echo `realpath $RSYNC_FROM`
+echo `realpath $RSYNC_TO`
+echo
+
+rsync -avm --include='*.py' -f 'hide,! */' $RSYNC_FROM $RSYNC_TO
 
 

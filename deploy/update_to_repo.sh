@@ -4,6 +4,8 @@ REPO_URL='https://github.com/stryku/hb'
 DEPLOY_DIR=`pwd`
 BACKUP_DIR=$DEPLOY_DIR/..
 
+BRANCH=$1
+
 echo '[UPDATE TO REPO START]'
 
 echo '[BACKUP]'
@@ -14,8 +16,16 @@ REPO_DIR=$(mktemp -d)
 cd $REPO_DIR
 git clone $REPO_URL
 
+if [$BRANCH != '']
+then
+    echo '[GIT] checking out to '$BRANCH
+    git checkout $BRANCH
+fi
+
+
 echo '[DEPLOY]'
-$REPO_DIR/hb/deploy/deploy.sh $DEPLOY_DIR
+cd $REPO_DIR/hb/deploy/
+./deploy.sh $DEPLOY_DIR
 
 echo '[RM REPO DIRECTORY]'
 rm -rf $REPO_DIR

@@ -1,9 +1,9 @@
 import sqlite3 as lite
 from enum import Enum
+from database.tables import CreationQueryFactory
+from database.table_type import TableType
 
 DB_FILE = 'db/database.db'
-RECEIPTS_TABLE = 'Receipts'
-EXTRACTED_RECEIPTS_TEXTS_TABLE = 'ExtractedReceiptTexts'
 
 
 class ReceiptStatus(Enum):
@@ -22,32 +22,29 @@ class Db:
         self.db = lite.connect(DB_FILE)
         self.db.row_factory = lite.Row
         self.cur = self.db.cursor()
-        self.execute('''CREATE TABLE IF NOT EXISTS ''' + RECEIPTS_TABLE + '''
-            (
-            id INTEGER PRIMARY KEY,
-            name varchar(255),
-            oryginal_name varchar(255),
-            status int DEFAULT 0
-            );''')
-        self.execute('''CREATE TABLE IF NOT EXISTS ''' + EXTRACTED_RECEIPTS_TEXTS_TABLE + '''
-            (
-            id INTEGER PRIMARY KEY,
-            receipt_id int,
-            txt text,
-            status int DEFAULT 0
-            );''')
+        self._create_tables()
 
-    def execute(self, command):
+    @staticmethod
+    def _add_semicolon(command):
         if not command.endswith(';'):
             command += ';'
 
+        return command
+
+    def _create_table(self, metadata):
+        self.execute(metadata.get_creation_query())
+
+    def _create_tables(self):
+        for table_type in TableType:
+            self._create_table(CreationQueryFactory.create(table_type))
+
+    def execute(self, command):
+        command = Db._add_semicolon(command)
         self.cur.execute(command)
         self.db.commit()
 
     def execute_escaped(self, command, escaped):
-        if not command.endswith(';'):
-            command += ';'
-
+        command = Db._add_semicolon(command)
         self.cur.execute(command, escaped)
         self.db.commit()
 
@@ -64,6 +61,10 @@ class Db:
         self.db.commit()
 
     def fetchall(self):
+        return self.cur.fetchall()
+
+    def get_tables(self):
+        self.execute("SELECT name FROM sqlite_master WHERE type='table'")
         return self.cur.fetchall()
 
 

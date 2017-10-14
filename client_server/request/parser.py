@@ -40,6 +40,15 @@ class CorrectTextContentParser:
         }
 
 
+class DbGetTableContentParser:
+    @staticmethod
+    def parse(data):
+        table_id_el = data.find('table_id')
+        return {
+            'receipt_id': table_id_el.text
+        }
+
+
 class RequestContentParserFactory:
     @staticmethod
     def create(request_type):
@@ -49,7 +58,9 @@ class RequestContentParserFactory:
             RequestType.GET_RECEIPT_STATUS: ReceiptIdContentParser(),
             RequestType.GET_RECEIPT_TEXT: ReceiptIdContentParser(),
             RequestType.GET_FOR_CORRECTION: ReceiptIdContentParser(),
-            RequestType.CORRECT_TEXT: CorrectTextContentParser()
+            RequestType.CORRECT_TEXT: CorrectTextContentParser(),
+            RequestType.DB_GET_TABLE: DbGetTableContentParser(),
+            RequestType.DB_GET_TABLES: NoContentParser()
         }[request_type]
 
 
