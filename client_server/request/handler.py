@@ -6,6 +6,7 @@ import scripts
 import utils
 from crypto.file_encryptor import EncryptedFile
 from database import lite, tables
+from database.tables_metadata import TableType
 from image import image
 from request.request_type import *
 from response import response
@@ -53,11 +54,11 @@ class ExtractFromReceiptRequestHandler:
         shutil.copy(file.name, 'data/received_images/' + name_to_save)
         db = lite.Db()
         db.execute("insert into " +
-                   tables.get_table_name(tables.TableType.RECEIPTS) +
+                   tables.get_table_name(TableType.RECEIPTS) +
                    " (name, oryginal_name) values ('" + name_to_save + "', '" + os.path.basename(file.name) + "')")
         inserted_id = db.last_id()
         command = "insert into " + \
-                  tables.get_table_name(tables.TableType.EXTRACTED_RECEIPTS_TEXTS_TABLE) + \
+                  tables.get_table_name(TableType.EXTRACTED_RECEIPTS_TEXTS_TABLE) + \
                   " (receipt_id, txt) values ('" + str(inserted_id) + "', ?)"
         db.get_cur().execute(command, (tesseract_return['stdout'],))
         db.commit()
@@ -86,7 +87,7 @@ class GetReceiptStatusHandler:
     def handle(request_content, formatter):
         receipt_id = request_content['receipt_id']
         try:
-            receipt_status_ret = lite.DbDataGetter.get_field(tables.get_table_name(tables.TableType.RECEIPTS),
+            receipt_status_ret = lite.DbDataGetter.get_field(tables.get_table_name(TableType.RECEIPTS),
                                                              'status',
                                                              receipt_id)
             receipt_status = lite.ReceiptStatus(int(receipt_status_ret))
@@ -103,7 +104,8 @@ class GetReceiptTextHandler:
     def handle(request_content, formatter):
         receipt_id = request_content['receipt_id']
         try:
-            extracted_recepit_text = lite.DbDataGetter.get_field(tables.get_table_name(tables.TableType.EXTRACTED_RECEIPTS_TEXTS_TABLE),
+            table_name = tables.get_table_name(TableType.EXTRACTED_RECEIPTS_TEXTS_TABLE)
+            extracted_recepit_text = lite.DbDataGetter.get_field(table_name,
                                                                  'txt',
                                                                  receipt_id,
                                                                  'receipt_id')
@@ -120,10 +122,12 @@ class GetForCorrectionHandler:
     def handle(request_content, formatter):
         receipt_id = request_content['receipt_id']
         try:
-            filename = lite.DbDataGetter.get_field(tables.get_table_name(tables.TableType.RECEIPTS),
+            filename = lite.DbDataGetter.get_field(tables.get_table_name(TableType.RECEIPTS),
                                                    'name',
                                                    receipt_id)
-            extracted_receipt_text = lite.DbDataGetter.get_field(tables.get_table_name(tables.TableType.EXTRACTED_RECEIPTS_TEXTS_TABLE),
+
+            table_name = tables.get_table_name(TableType.EXTRACTED_RECEIPTS_TEXTS_TABLE)
+            extracted_receipt_text = lite.DbDataGetter.get_field(table_name,
                                                                  'txt',
                                                                  receipt_id,
                                                                  'receipt_id')
@@ -152,7 +156,7 @@ class CorrectTextHandler:
 
     @staticmethod
     def update_text(receipt_id, text):
-        lite.DbDataUpdater.update_field(tables.get_table_name(tables.TableType.EXTRACTED_RECEIPTS_TEXTS_TABLE),
+        lite.DbDataUpdater.update_field(tables.get_table_name(TableType.EXTRACTED_RECEIPTS_TEXTS_TABLE),
                                         'txt',
                                         text,
                                         receipt_id,
@@ -160,7 +164,7 @@ class CorrectTextHandler:
 
     @staticmethod
     def update_receipt(receipt_id):
-        lite.DbDataUpdater.update_field(tables.get_table_name(tables.TableType.RECEIPTS),
+        lite.DbDataUpdater.update_field(tables.get_table_name(TableType.RECEIPTS),
                                         'status',
                                         lite.ReceiptStatus.CORRECTED.value,
                                         receipt_id)

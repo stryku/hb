@@ -1,9 +1,4 @@
-from enum import Enum
-
-
-class TableType(Enum):
-    RECEIPTS = 0,
-    EXTRACTED_RECEIPTS_TEXTS = 1
+from database.tables_metadata import TablesMetadataFactory
 
 
 class CreationQueryBuilder:
@@ -39,45 +34,6 @@ class CreationQueryBuilder:
 
         return 'CREATE TABLE IF NOT EXISTS {} ({});'.format(self.table_name,
                                                             self._build_columns())
-
-
-class ReceiptTableMetadata:
-    @staticmethod
-    def get_columns():
-        return [
-            'id INTEGER PRIMARY KEY',
-            'name varchar(255)',
-            'original_name varchar(255)',
-            'status int DEFAULT 0'
-        ]
-
-    @staticmethod
-    def get_name():
-        return 'Receipts'
-
-
-class ExtractedReceiptsTextsTableMetadata:
-    @staticmethod
-    def get_columns():
-        return [
-            'id INTEGER PRIMARY KEY',
-            'receipt_id int',
-            'txt text',
-            'status int DEFAULT 0'
-        ]
-
-    @staticmethod
-    def get_name():
-        return 'ExtractedReceiptTexts'
-
-
-class TablesMetadataFactory:
-    @staticmethod
-    def create(table_type):
-        return {
-            TableType.RECEIPTS: ReceiptTableMetadata(),
-            TableType.EXTRACTED_RECEIPTS_TEXTS: ExtractedReceiptsTextsTableMetadata()
-        }[table_type]
 
 
 class CreationQueryFactory:
