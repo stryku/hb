@@ -60,9 +60,23 @@ class Db:
     def fetchall(self):
         return self.cur.fetchall()
 
+    @staticmethod
+    def _dict_from_row(row):
+        return dict(zip(row.keys(), row))
+
+    @staticmethod
+    def _list_from_rows(rows):
+        result = []
+
+        for row in rows:
+            result.append(Db._dict_from_row(row))
+
+        return result
+
     def get_tables(self):
         self.execute("SELECT name FROM sqlite_master WHERE type='table'")
-        return self.cur.fetchall()
+        tables = self.cur.fetchall()
+        return Db._list_from_rows(tables)
 
 
 class NotFoundInDbException(Exception):

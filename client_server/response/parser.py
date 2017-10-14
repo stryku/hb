@@ -100,6 +100,15 @@ class GetForCorrectionResponseParser:
         return ReceiptNotFoundParserGuard.parse(resp, GetForCorrectionResponseParser.parse_content)
 
 
+class DbGetTablesResponseParser:
+    @staticmethod
+    def parse(resp):
+        content_el = resp.find('content')
+        return {
+            'tables': content_el.find('tables').text
+        }
+
+
 class ResponseContentParserFactory:
     @staticmethod
     def create(requested):
@@ -109,7 +118,8 @@ class ResponseContentParserFactory:
             RequestType.GET_RECEIPT_STATUS: GetReceiptStatusResponseParser(),
             RequestType.GET_RECEIPT_TEXT: GetReceiptTextResponseParser(),
             RequestType.GET_FOR_CORRECTION: GetForCorrectionResponseParser(),
-            RequestType.CORRECT_TEXT: NoContentResponseParser()
+            RequestType.CORRECT_TEXT: NoContentResponseParser(),
+            RequestType.DB_GET_TABLES: DbGetTablesResponseParser()
         }[requested]
 
 

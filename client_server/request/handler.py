@@ -210,9 +210,19 @@ class CorrectTextHandler:
 
 class DbGetTablesHandler:
     @staticmethod
+    def _tables_dicts_to_list(dicts_list):
+        result = []
+        for table_dict in dicts_list:
+            result.append(table_dict['name'])
+
+        return result
+
+    @staticmethod
     def handle(request_content, formatter):
+        tables_dicts = lite.Db().get_tables()
+        tables_names = DbGetTablesHandler._tables_dicts_to_list(tables_dicts)
         return formatter.format(ResponseErrorCode.OK,
-                                {'tables': lite.Db().get_tables()})
+                                {'tables': str(tables_names)})
 
 
 class RequestHandlerFactory:
