@@ -37,17 +37,20 @@ class Db:
             status int DEFAULT 0
             );''')
 
-    def execute(self, command):
+    @staticmethod
+    def _add_semicilon(command):
         if not command.endswith(';'):
             command += ';'
 
+        return command
+
+    def execute(self, command):
+        command = Db._add_semicilon(command)
         self.cur.execute(command)
         self.db.commit()
 
     def execute_escaped(self, command, escaped):
-        if not command.endswith(';'):
-            command += ';'
-
+        command = Db._add_semicilon(command)
         self.cur.execute(command, escaped)
         self.db.commit()
 
