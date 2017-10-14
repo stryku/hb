@@ -63,6 +63,10 @@ class Db:
     def fetchall(self):
         return self.cur.fetchall()
 
+    def get_tables(self):
+        self.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        return self.cur.fetchall()
+
 
 class NotFoundInDbException(Exception):
     pass

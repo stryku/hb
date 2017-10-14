@@ -208,6 +208,13 @@ class CorrectTextHandler:
                                     {'receipt_id': request_content['receipt_id']})
 
 
+class DbGetTablesHandler:
+    @staticmethod
+    def handle(request_content, formatter):
+        return formatter.format(ResponseErrorCode.OK,
+                                {'tables': lite.Db().get_tables()})
+
+
 class RequestHandlerFactory:
     @staticmethod
     def create(request_type):
@@ -217,7 +224,8 @@ class RequestHandlerFactory:
             RequestType.GET_RECEIPT_STATUS: GetReceiptStatusHandler(),
             RequestType.GET_RECEIPT_TEXT: GetReceiptTextHandler(),
             RequestType.GET_FOR_CORRECTION: GetForCorrectionHandler(),
-            RequestType.CORRECT_TEXT: CorrectTextHandler()
+            RequestType.CORRECT_TEXT: CorrectTextHandler(),
+            RequestType.DB_GET_TABLES: DbGetTablesHandler()
         }[request_type]
 
 

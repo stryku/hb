@@ -10,3 +10,5 @@ class RequestType(Enum):
     GET_FOR_CORRECTION = 5
     CORRECT_TEXT = 6
     STATUS = 7
+    DB_GET_TABLE = 8
+    DB_GET_TABLES = 9

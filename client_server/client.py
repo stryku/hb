@@ -51,6 +51,9 @@ def create_request():
         return request.RequestFactory.create_full(RequestType.CORRECT_TEXT.name,
                                                   content)
 
+    if sys.argv[2] == 'tables':
+        return request.RequestFactory.create(RequestType.DB_GET_TABLES.name)
+
     print("Unknown args: " + str(sys.argv))
 
 
