@@ -1,6 +1,7 @@
 import sqlite3 as lite
 from enum import Enum
-from database.tables import CreationQueryFactory, TableType
+from database.tables import CreationQueryFactory
+from database.table_type import TableType
 
 DB_FILE = 'db/database.db'
 
