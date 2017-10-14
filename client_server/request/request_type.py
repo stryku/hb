@@ -12,3 +12,4 @@ class RequestType(Enum):
     STATUS = 7
     DB_GET_TABLE = 8
     DB_GET_TABLES = 9
+    ADD_EXPENSES_LIST = 10

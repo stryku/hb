@@ -31,7 +31,8 @@ class ResponseHandlerFactory:
             RequestType.GET_RECEIPT_TEXT: PrintResponseHandler(),
             RequestType.GET_FOR_CORRECTION: GetForCorrectionResponseHandler(),
             RequestType.CORRECT_TEXT: PrintResponseHandler(),
-            RequestType.DB_GET_TABLES: PrintResponseHandler()
+            RequestType.DB_GET_TABLES: PrintResponseHandler(),
+            RequestType.ADD_EXPENSES_LIST: PrintResponseHandler()
         }[request_type]
 
 

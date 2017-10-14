@@ -55,6 +55,12 @@ def create_request():
     if sys.argv[2] == 'tables':
         return request.RequestFactory.create(RequestType.DB_GET_TABLES)
 
+    if sys.argv[2] == 'add_ex_list':
+        txt_filename = sys.argv[3]
+        content = {'expenses_list': utils.read_whole_file(txt_filename)}
+        return request.RequestFactory.create_full(RequestType.ADD_EXPENSES_LIST.name,
+                                                  content)
+
     print("Unknown args: " + str(sys.argv))
 
 

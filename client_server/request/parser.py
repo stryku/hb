@@ -40,12 +40,11 @@ class CorrectTextContentParser:
         }
 
 
-class DbGetTableContentParser:
+class AddExpansesList:
     @staticmethod
     def parse(data):
-        table_id_el = data.find('table_id')
         return {
-            'receipt_id': table_id_el.text
+            'expanses_list': data.find('expanses_list').text
         }
 
 
@@ -59,8 +58,8 @@ class RequestContentParserFactory:
             RequestType.GET_RECEIPT_TEXT: ReceiptIdContentParser(),
             RequestType.GET_FOR_CORRECTION: ReceiptIdContentParser(),
             RequestType.CORRECT_TEXT: CorrectTextContentParser(),
-            RequestType.DB_GET_TABLE: DbGetTableContentParser(),
-            RequestType.DB_GET_TABLES: NoContentParser()
+            RequestType.DB_GET_TABLES: NoContentParser(),
+            RequestType.ADD_EXPENSES_LIST: AddExpansesList()
         }[request_type]
 
 

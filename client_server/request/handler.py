@@ -225,6 +225,84 @@ class DbGetTablesHandler:
                                 {'tables': str(tables_names)})
 
 
+class AddExpensesListHandler:
+    @staticmethod
+    def parse_expense_line(line, date, shop_name):
+        elements = line.split(';')
+        return {
+            'name': elements[0],
+            'piece_price': elements[1],
+            'amount': elements[2],
+            'date': date,
+            'shop_name': shop_name
+        }
+
+    @staticmethod
+    def extract_expenses(lines):
+        expenses_date = lines[0]
+        lines.pop(0)
+        expenses_lines = lines
+        expenses = []
+        for line in expenses_lines:
+            expenses.append(AddExpensesListHandler.parse_expense_line(line, expenses_date))
+
+        return expenses
+
+    @staticmethod
+    def get_shop_id(shop_name):
+        shops_table_name = tables.get_table_name(TableType.SHOPS)
+        try:
+            return lite.DbDataGetter.get_field(shops_table_name,
+                                               'id',
+                                               shop_name,
+                                               'name')
+        except lite.NotFoundInDbException:
+            return lite.DbInserter.insert_from_dict(TableType.SHOPS, {'name': shop_name})
+
+    @staticmethod
+    def get_expense_product_id(expense):
+        products_table_name = tables.get_table_name(TableType.PRODUCTS)
+        try:
+            return lite.DbDataGetter.get_field(products_table_name,
+                                               'id',
+                                               expense['name'],
+                                               'name')
+        except lite.NotFoundInDbException:
+            shop_id = AddExpensesListHandler.get_shop_id(expense['shop_name'])
+            product_row_dict = {
+                'shop_id': shop_id,
+                'name': expense['name']
+            }
+            return lite.DbInserter.insert_from_dict(TableType.PRODUCTS, product_row_dict)
+
+    @staticmethod
+    def insert_expense(expense):
+        product_id = AddExpensesListHandler.get_expense_product_id(expense)
+        expense_row_dict = {
+            'product_id': product_id,
+            'piece_price': expense['piece_price'],
+            'amount': expense['amount']
+        }
+        return lite.DbInserter.insert_from_dict(TableType.EXPENSES, expense_row_dict)
+
+    @staticmethod
+    def insert_expenses(expenses):
+        expenses_ids = []
+        for expense in expenses:
+            expense_id = AddExpensesListHandler.insert_expense(expense)
+            expenses_ids.append(expense_id)
+
+        return expenses_ids
+
+    @staticmethod
+    def handle(request_content, formatter):
+        lines = request_content['expenses_lines'].splitlines()
+        expenses = AddExpensesListHandler.extract_expenses(lines)
+        expenses_ids = AddExpensesListHandler.insert_expenses(expenses)
+        return formatter.format(ResponseErrorCode.OK,
+                                {'expenses_ids': ''.join(expenses_ids)})
+
+
 class RequestHandlerFactory:
     @staticmethod
     def create(request_type):
@@ -235,7 +313,8 @@ class RequestHandlerFactory:
             RequestType.GET_RECEIPT_TEXT: GetReceiptTextHandler(),
             RequestType.GET_FOR_CORRECTION: GetForCorrectionHandler(),
             RequestType.CORRECT_TEXT: CorrectTextHandler(),
-            RequestType.DB_GET_TABLES: DbGetTablesHandler()
+            RequestType.DB_GET_TABLES: DbGetTablesHandler(),
+            RequestType.ADD_EXPENSES_LIST: AddExpensesListHandler()
         }[request_type]
 
 

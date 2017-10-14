@@ -64,7 +64,6 @@ class ExpensesTableMetadata:
         return [
             'id INTEGER PRIMARY KEY',
             'product_id int',
-            'receipt_id int',
             'piece_price REAL',
             'amount REAL',
         ]

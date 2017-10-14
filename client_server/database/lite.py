@@ -1,6 +1,6 @@
 import sqlite3 as lite
 from enum import Enum
-from database.tables import CreationQueryFactory
+from database.tables import CreationQueryFactory, get_table_name
 from database.table_type import TableType
 
 DB_FILE = 'db/database.db'
@@ -60,6 +60,7 @@ class Db:
     def fetchall(self):
         return self.cur.fetchall()
 
+
     @staticmethod
     def _dict_from_row(row):
         return dict(zip(row.keys(), row))
@@ -108,3 +109,23 @@ class DbDataUpdater:
         db = Db()
         db.execute_escaped("update " + table + " set " + column + "=? where " + key_column + "=?", (data, key))
         db.close()
+
+
+class DbInserter:
+    @staticmethod
+    def insert(table_type, columns, *values):
+        table_name = get_table_name(table_type)
+        db = Db()
+        marks = '?' * len(values)
+        marks = ','.join(marks)
+        query = 'INSERT INTO {} ({}), VALUES ({})'.format(table_name, columns, marks)
+        db.execute_escaped(query, (values))
+        last_id = db.last_id()
+        db.close()
+        return last_id
+
+    @staticmethod
+    def insert_from_dict(table_type, row_dict):
+        columns = ','.join(row_dict.keys())
+        values = row_dict.values()
+        return DbInserter.insert(table_type, columns, *values)
