@@ -1,6 +1,6 @@
 import sqlite3 as lite
 from enum import Enum
-from database.tables import TablesMetadataFactory, TableType
+from database.tables import CreationQueryFactory, TableType
 
 DB_FILE = 'db/database.db'
 
@@ -34,8 +34,8 @@ class Db:
         self.execute(metadata.get_creation_query())
 
     def _create_tables(self):
-        self._create_table(TablesMetadataFactory.create(TableType.RECEIPTS))
-        self._create_table(TablesMetadataFactory.create(TableType.EXTRACTED_RECEIPTS_TEXTS))
+        self._create_table(CreationQueryFactory.create(TableType.RECEIPTS))
+        self._create_table(CreationQueryFactory.create(TableType.EXTRACTED_RECEIPTS_TEXTS))
 
     def execute(self, command):
         command = Db._add_semicolon(command)
