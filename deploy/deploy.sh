@@ -1,9 +1,16 @@
 #!/bin/bash
 
 DEPLOY_DIR=$1
+CLIENT_SERVER_DIR=$2
 SCRIPTS_DIR=$DEPLOY_DIR/scripts
 DB_DIR=$DEPLOY_DIR/db
 SAVED_IMAGES_DIR=$DEPLOY_DIR/data/received_images
+
+echo '[CURRENT DIR]'
+echo "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+echo '[ARGUMENTS]'
+echo $@
+echo
 
 mkdir $SCRIPTS_DIR
 mkdir $DB_DIR
@@ -15,7 +22,15 @@ yes | cp -rfi ../image_processing/tesseract/tessdata $DEPLOY_DIR/tessdata
 yes | cp -rfi update_to_repo.sh $DEPLOY_DIR
 yes | cp -rfi backup.sh $DEPLOY_DIR
 
-RSYNC_FROM=$PWD'/../client_server/'
+
+if [$CLIENT_SERVER_DIR == '']
+then
+    echo '[CLIENT_SERVER_DIR empty, assigning ../client_server]'
+    $CLIENT_SERVER_DIR='../client_server/'
+fi
+
+
+RSYNC_FROM=$CLIENT_SERVER_DIR
 RSYNC_TO=$DEPLOY_DIR
 
 echo
